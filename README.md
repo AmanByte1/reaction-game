@@ -91,14 +91,17 @@ Deploy the `dist` folder to your static host (GitHub Pages, Netlify, etc.).
 
 ### GitHub Pages (Recommended)
 
-This repo includes `.github/workflows/deploy.yml`, which builds the React app and publishes the `dist` folder.
+`.github/workflows/deploy.yml` runs `npm run build` and pushes the built `dist/` folder to the **`gh-pages` branch** (no `.jsx` source files).
 
-1. Push to GitHub (include the workflow file).
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
-4. After the workflow runs, the site is live (custom domain: `reactiongame.qzz.io` via `public/CNAME`).
+1. Push to `main` (workflow runs automatically).
+2. Open **Settings → Pages**.
+3. **Source:** Deploy from a branch.
+4. **Branch:** `gh-pages` → **/ (root)** — **not** `main`.
+5. Save. Wait for the green workflow check under **Actions**, then hard-refresh your site.
 
-**Why a white page happens:** If Pages serves the `main` branch root, visitors get dev `index.html` (`/src/main.jsx`) without bundled React. You must deploy the **built** `dist` output (this workflow does that automatically).
+Custom domain `reactiongame.qzz.io` comes from `public/CNAME` (copied into each build).
+
+**MIME type `text/jsx` error:** GitHub Pages is still serving the `main` branch. Browsers cannot run raw `.jsx` files. Switch Pages to the `gh-pages` branch after the deploy workflow succeeds.
 
 ### Netlify
 1. Drag and drop the files folder to netlify.com

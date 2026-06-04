@@ -6,11 +6,16 @@ class ReactionGame {
         this.currentMode = 'normal';
         this.soundEnabled = true;
         this.scores = this.loadScores();
+        this.isMobile = this.detectMobile();
         
         this.initializeElements();
         this.bindEvents();
         this.updateStats();
         this.updateLeaderboard();
+    }
+
+    detectMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
     initializeElements() {
@@ -56,18 +61,59 @@ class ReactionGame {
         this.proModeBtn.addEventListener('click', () => this.setMode('pro'));
         this.proModeBtn.addEventListener('touchstart', (e) => e.stopPropagation());
 
-        // Retry buttons
+        // Retry buttons - Mobile optimized
         this.retryBtns.forEach(btn => {
             btn.addEventListener('click', () => this.resetGame());
-            btn.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-            });
-            btn.addEventListener('touchend', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                this.resetGame();
-            });
+            
+            // Mobile-specific touch handling
+            if (this.isMobile) {
+                let touchStarted = false;
+                let touchTimer = null;
+                
+                btn.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    touchStarted = true;
+                    btn.style.opacity = '0.8';
+                    
+                    // Fallback timer in case touchend doesn't fire
+                    touchTimer = setTimeout(() => {
+                        if (touchStarted) {
+                            this.resetGame();
+                            touchStarted = false;
+                        }
+                    }, 500);
+                }, { passive: false });
+                
+                btn.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    btn.style.opacity = '1';
+                    
+                    if (touchTimer) clearTimeout(touchTimer);
+                    if (touchStarted) {
+                        this.resetGame();
+                        touchStarted = false;
+                    }
+                }, { passive: false });
+                
+                btn.addEventListener('touchcancel', (e) => {
+                    btn.style.opacity = '1';
+                    touchStarted = false;
+                    if (touchTimer) clearTimeout(touchTimer);
+                });
+            } else {
+                // Desktop touch events
+                btn.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+                btn.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.resetGame();
+                });
+            }
         });
 
         // Leaderboard tabs

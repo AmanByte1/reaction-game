@@ -52,11 +52,22 @@ class ReactionGame {
 
         // Mode buttons
         this.normalModeBtn.addEventListener('click', () => this.setMode('normal'));
+        this.normalModeBtn.addEventListener('touchstart', (e) => e.stopPropagation());
         this.proModeBtn.addEventListener('click', () => this.setMode('pro'));
+        this.proModeBtn.addEventListener('touchstart', (e) => e.stopPropagation());
 
         // Retry buttons
         this.retryBtns.forEach(btn => {
             btn.addEventListener('click', () => this.resetGame());
+            btn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+            btn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                this.resetGame();
+            });
         });
 
         // Leaderboard tabs
@@ -66,6 +77,7 @@ class ReactionGame {
                 btn.classList.add('active');
                 this.updateLeaderboard(btn.dataset.mode);
             });
+            btn.addEventListener('touchstart', (e) => e.stopPropagation());
         });
 
         // Sound toggle
@@ -73,6 +85,7 @@ class ReactionGame {
             this.soundEnabled = !this.soundEnabled;
             this.soundToggleBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
         });
+        this.soundToggleBtn.addEventListener('touchstart', (e) => e.stopPropagation());
 
         // Clear data
         this.clearDataBtn.addEventListener('click', () => {
@@ -80,6 +93,7 @@ class ReactionGame {
                 this.clearAllData();
             }
         });
+        this.clearDataBtn.addEventListener('touchstart', (e) => e.stopPropagation());
 
         // Prevent context menu on game area
         this.gameArea.addEventListener('contextmenu', (e) => e.preventDefault());

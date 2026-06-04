@@ -17,8 +17,25 @@ A fast-paced, neon-styled reaction time game built with pure HTML, CSS, and Java
 
 ## 🚀 Quick Start
 
+### Development
+
+```bash
+npm install
+npm run dev
+```
+
+### Production build
+
+```bash
+npm run build
+```
+
+Deploy the `dist` folder to your static host (GitHub Pages, Netlify, etc.).
+
+### Play
+
 1. **Clone or download** the files
-2. **Open `index.html`** in your web browser
+2. **Run the dev server** or open the built site
 3. **Click "Wait for GREEN..."** to start playing
 4. **Click immediately** when the screen turns green
 5. **Try to beat your best time!**
@@ -74,7 +91,7 @@ A fast-paced, neon-styled reaction time game built with pure HTML, CSS, and Java
 
 ### GitHub Pages (Recommended)
 1. Create a new repository on GitHub
-2. Upload all files (`index.html`, `style.css`, `script.js`, `README.md`)
+2. Build with `npm run build` and upload the `dist` folder (or configure GitHub Actions to build on deploy)
 3. Go to Settings → Pages
 4. Select "Deploy from a branch" and choose `main`
 5. Your site will be live at `https://username.github.io/repository-name`
@@ -96,8 +113,8 @@ Since this is a pure frontend application, it works on any static hosting servic
 
 ## 🛠️ Technical Details
 
-- **No dependencies**: Pure vanilla JavaScript
-- **No build process**: Ready to deploy immediately
+- **React + Vite**: Same UI and game logic as the original vanilla version
+- **Build**: `npm run build` outputs static files in `dist/`
 - **Browser compatibility**: Modern browsers (Chrome, Firefox, Safari, Edge)
 - **LocalStorage**: ~5KB max data usage
 - **Responsive**: Works on phones, tablets, and desktops
@@ -106,11 +123,15 @@ Since this is a pure frontend application, it works on any static hosting servic
 ## 📁 File Structure
 
 ```
-reaction-time-battle/
-├── index.html          # Main HTML structure
-├── style.css           # All styling and animations
-├── script.js           # Game logic and interactions
-└── README.md           # This file
+reaction-game/
+├── index.html          # Vite entry (AdSense + root mount)
+├── src/
+│   ├── App.jsx         # Game UI and state
+│   ├── gameUtils.js    # Scores, sounds, helpers
+│   ├── main.jsx        # React entry
+│   └── style.css       # All styling and animations
+├── public/CNAME        # Custom domain for GitHub Pages
+└── README.md
 ```
 
 ## 🎯 Game Mechanics
@@ -124,7 +145,7 @@ The game uses precise timing with `Date.now()` for millisecond accuracy:
 ## 🔧 Customization
 
 ### Colors
-Edit the CSS variables in `style.css`:
+Edit the CSS variables in `src/style.css`:
 ```css
 :root {
     --accent-red: #ff0040;
@@ -135,10 +156,10 @@ Edit the CSS variables in `style.css`:
 ```
 
 ### Difficulty
-Modify the timing ranges in `script.js`:
+Modify the timing ranges in `src/App.jsx` (`startGame`):
 ```javascript
-const minDelay = this.currentMode === 'pro' ? 1000 : 2000;
-const maxDelay = this.currentMode === 'pro' ? 3000 : 5000;
+const minDelay = currentMode === 'pro' ? 1000 : 2000;
+const maxDelay = currentMode === 'pro' ? 3000 : 5000;
 ```
 
 ### Sound Effects
@@ -168,4 +189,4 @@ Feel free to submit issues and enhancement requests!
 
 ---
 
-**Built with ❤️ using pure HTML, CSS, and JavaScript**
+**Built with ❤️ using React, HTML, and CSS**

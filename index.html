@@ -7,82 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Reaction Time Battle</title>
-    <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>⚡ Reaction Time Battle</h1>
-            <div class="mode-toggle">
-                <button id="normalMode" class="mode-btn active">Normal Mode</button>
-                <button id="proMode" class="mode-btn">🔥 Pro Mode</button>
-            </div>
-        </header>
-
-        <main>
-            <div class="game-area" id="gameArea">
-                <div class="game-content">
-                    <div id="waitingScreen" class="screen active">
-                        <h2 id="waitingMessage">Wait for GREEN...</h2>
-                        <p id="waitingMessage">Click to start</p>
-                    </div>
-                    
-                    <div id="readyScreen" class="screen">
-                        <h2>🟢 GO!</h2>
-                        <p>Click as fast as you can!</p>
-                    </div>
-                    
-                    <div id="tooEarlyScreen" class="screen">
-                        <h2>❌ Too Early!</h2>
-                        <p>Wait for green next time</p>
-                        <button class="retry-btn">Try Again</button>
-                    </div>
-                    
-                    <div id="resultScreen" class="screen">
-                        <h2>Your Time</h2>
-                        <div class="result-time" id="resultTime">0ms</div>
-                        <div class="result-message" id="resultMessage"></div>
-                        <button class="retry-btn">Play Again</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stats-panel">
-                <div class="current-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Best Time</span>
-                        <span class="stat-value" id="bestTime">--</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Average</span>
-                        <span class="stat-value" id="avgTime">--</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Games</span>
-                        <span class="stat-value" id="gamesPlayed">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="leaderboard-section">
-                <h2>🏆 Leaderboard</h2>
-                <div class="leaderboard-tabs">
-                    <button class="tab-btn active" data-mode="normal">Normal</button>
-                    <button class="tab-btn" data-mode="pro">Pro Mode</button>
-                </div>
-                <div class="leaderboard" id="leaderboard">
-                    <div class="empty-leaderboard">No scores yet. Be the first!</div>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <button id="soundToggle" class="sound-btn">🔊</button>
-            <button id="clearData" class="clear-btn">Clear All Data</button>
-        </footer>
-    </div>
-
-    <script src="script.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

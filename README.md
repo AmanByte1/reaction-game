@@ -90,11 +90,15 @@ Deploy the `dist` folder to your static host (GitHub Pages, Netlify, etc.).
 ## 🌐 Deployment
 
 ### GitHub Pages (Recommended)
-1. Create a new repository on GitHub
-2. Build with `npm run build` and upload the `dist` folder (or configure GitHub Actions to build on deploy)
-3. Go to Settings → Pages
-4. Select "Deploy from a branch" and choose `main`
-5. Your site will be live at `https://username.github.io/repository-name`
+
+This repo includes `.github/workflows/deploy.yml`, which builds the React app and publishes the `dist` folder.
+
+1. Push to GitHub (include the workflow file).
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
+4. After the workflow runs, the site is live (custom domain: `reactiongame.qzz.io` via `public/CNAME`).
+
+**Why a white page happens:** If Pages serves the `main` branch root, visitors get dev `index.html` (`/src/main.jsx`) without bundled React. You must deploy the **built** `dist` output (this workflow does that automatically).
 
 ### Netlify
 1. Drag and drop the files folder to netlify.com

@@ -43,7 +43,11 @@ class ReactionGame {
         this.gameArea.addEventListener('click', () => this.handleGameClick());
         this.gameArea.addEventListener('touchstart', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             this.handleGameClick();
+        });
+        this.gameArea.addEventListener('touchend', (e) => {
+            e.preventDefault();
         });
 
         // Mode buttons
@@ -147,6 +151,13 @@ class ReactionGame {
         this.gameState = 'idle';
         this.showScreen('waiting');
         this.gameArea.className = 'game-area';
+        
+        // Auto-start the game after reset
+        setTimeout(() => {
+            if (this.gameState === 'idle') {
+                this.startGame();
+            }
+        }, 300);
     }
 
     showScreen(screenName) {

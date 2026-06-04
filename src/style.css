@@ -517,8 +517,125 @@ footer {
     .retry-btn,
     .tab-btn,
     .sound-btn,
-    .clear-btn {
+    .clear-btn,
+    .game-select-btn,
+    .stop-btn {
         min-height: 44px;
         min-width: 44px;
     }
+}
+
+/* Top-level game selector */
+.game-select {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.game-select-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--accent-green);
+    background: transparent;
+    color: var(--accent-green);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.game-select-btn:hover {
+    background: var(--accent-green);
+    color: var(--bg-primary);
+    box-shadow: var(--neon-glow);
+    transform: translateY(-2px);
+}
+
+.game-select-btn.active {
+    background: var(--accent-green);
+    color: var(--bg-primary);
+    box-shadow: var(--neon-glow-strong);
+}
+
+.reaction-modes {
+    margin-bottom: 30px;
+}
+
+/* Box Catch game */
+.boxcatch {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.boxcatch-area {
+    cursor: default;
+}
+
+.catch-box {
+    position: absolute;
+    width: clamp(46px, 15%, 74px);
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    box-shadow: var(--neon-glow-strong);
+    cursor: pointer;
+    z-index: 6;
+    padding: 0;
+    transition: transform 0.05s ease;
+    touch-action: manipulation;
+}
+
+.catch-box:hover {
+    transform: scale(1.05);
+}
+
+.catch-box:active {
+    transform: scale(0.92);
+}
+
+.boxcatch-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.difficulty-badge {
+    padding: 8px 18px;
+    border: 2px solid var(--accent-green);
+    border-radius: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+}
+
+.stop-btn {
+    padding: 10px 24px;
+    border: 2px solid var(--accent-red);
+    background: transparent;
+    color: var(--accent-red);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.stop-btn:hover {
+    background: var(--accent-red);
+    color: var(--text-primary);
+    box-shadow: var(--neon-glow);
+}
+
+.boxcatch-stats {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }

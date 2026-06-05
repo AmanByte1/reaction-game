@@ -7,9 +7,16 @@ import {
   loadBoxCatchBest,
   randomBoxPosition,
   saveBoxCatchBest,
+  loadBoxCatchTopScores,
+  addToTopScores,
+  formatTime,
+  isNewTopScore,
 } from './boxCatchUtils';
 
 const BOX_SIZE = 18; // percentage of the play area
+const MIN_TIMER = 10; // seconds
+const MAX_TIMER = 300; // seconds
+const DEFAULT_TIMER = 60; // seconds
 
 export default function BoxCatchGame() {
   const [gameState, setGameState] = useState('idle');
@@ -19,6 +26,10 @@ export default function BoxCatchGame() {
   const [reactionTimes, setReactionTimes] = useState([]);
   const [boxPos, setBoxPos] = useState({ top: 40, left: 40 });
   const [best, setBest] = useState(() => loadBoxCatchBest());
+  const [topScores, setTopScores] = useState(() => loadBoxCatchTopScores());
+  const [timerDuration, setTimerDuration] = useState(DEFAULT_TIMER);
+  const [timeRemaining, setTimeRemaining] = useState(DEFAULT_TIMER);
+  const [showTopScores, setShowTopScores] = useState(false);
 
   const boxTimerRef = useRef(null);
   const boxAppearRef = useRef(0);
@@ -26,11 +37,27 @@ export default function BoxCatchGame() {
   const scoreRef = useRef(0);
   const missesRef = useRef(0);
   const spawnBoxRef = useRef(() => {});
+  const gameTimerRef = useRef(null);
+  const timerIntervalRef = useRef(null);
 
   const clearBoxTimer = useCallback(() => {
     if (boxTimerRef.current) {
       clearTimeout(boxTimerRef.current);
       boxTimerRef.current = null;
+    }
+  }, []);
+
+  const clearGameTimer = useCallback(() => {
+    if (gameTimerRef.current) {
+      clearTimeout(gameTimerRef.current);
+      gameTimerRef.current = null;
+    }
+  }, []);
+
+  const clearTimerInterval = useCallback(() => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
     }
   }, []);
 
@@ -57,25 +84,48 @@ export default function BoxCatchGame() {
     setScore(0);
     setMisses(0);
     setReactionTimes([]);
+    setTimeRemaining(timerDuration);
     runningRef.current = true;
     setGameState('running');
     playSound('start', soundEnabled);
     spawnBox();
-  }, [soundEnabled, spawnBox]);
+
+    // Start countdown timer
+    let remaining = timerDuration;
+    setTimeRemaining(remaining);
+    timerIntervalRef.current = setInterval(() => {
+      remaining -= 1;
+      setTimeRemaining(remaining);
+
+      if (remaining <= 0) {
+        clearTimerInterval();
+        runningRef.current = false;
+        clearBoxTimer();
+        setGameState('over');
+        playSound('fail', soundEnabled);
+      }
+    }, 1000);
+  }, [timerDuration, soundEnabled, spawnBox, clearBoxTimer, clearTimerInterval]);
 
   const stopGame = useCallback(() => {
     runningRef.current = false;
     clearBoxTimer();
+    clearTimerInterval();
+    clearGameTimer();
     setGameState('over');
+    
+    const finalScore = scoreRef.current;
+    const updatedTopScores = addToTopScores(finalScore);
+    setTopScores(updatedTopScores);
+    
     setBest((prevBest) => {
-      const finalScore = scoreRef.current;
       if (finalScore > prevBest) {
         saveBoxCatchBest(finalScore);
         return finalScore;
       }
       return prevBest;
     });
-  }, [clearBoxTimer]);
+  }, [clearBoxTimer, clearTimerInterval, clearGameTimer]);
 
   const handleBoxHit = useCallback(
     (e) => {
@@ -96,12 +146,15 @@ export default function BoxCatchGame() {
     return () => {
       runningRef.current = false;
       clearBoxTimer();
+      clearTimerInterval();
+      clearGameTimer();
     };
-  }, [clearBoxTimer]);
+  }, [clearBoxTimer, clearTimerInterval, clearGameTimer]);
 
   const avgReaction = getAverage(reactionTimes);
   const difficulty = getDifficulty(score, misses);
   const difficultyColor = getDifficultyColor(difficulty.label);
+  const isNewTop = score > 0 && isNewTopScore(score);
 
   return (
     <div className="boxcatch">
@@ -124,9 +177,57 @@ export default function BoxCatchGame() {
             <div className="screen active">
               <h2>📦 Box Catch</h2>
               <p>Click the box before it jumps away!</p>
+              
+              <div className="timer-setup">
+                <label htmlFor="timer-input">Time Limit (seconds):</label>
+                <div className="timer-input-group">
+                  <input
+                    id="timer-input"
+                    type="number"
+                    min={MIN_TIMER}
+                    max={MAX_TIMER}
+                    value={timerDuration}
+                    onChange={(e) => {
+                      const val = Math.max(MIN_TIMER, Math.min(MAX_TIMER, Number(e.target.value)));
+                      setTimerDuration(val);
+                      setTimeRemaining(val);
+                    }}
+                    className="timer-input"
+                  />
+                  <span className="timer-hint">{MIN_TIMER}s - {MAX_TIMER}s</span>
+                </div>
+              </div>
+
               <button type="button" className="retry-btn" onClick={startGame}>
                 Start
               </button>
+
+              {topScores.length > 0 && (
+                <button
+                  type="button"
+                  className="view-scores-btn"
+                  onClick={() => setShowTopScores(!showTopScores)}
+                >
+                  {showTopScores ? 'Hide' : 'View'} Top 10 Scores
+                </button>
+              )}
+
+              {showTopScores && (
+                <div className="top-scores-panel">
+                  <h3>🏆 Top 10 Scores</h3>
+                  <ol className="top-scores-list">
+                    {topScores.map((entry, idx) => (
+                      <li key={idx} className="top-score-item">
+                        <span className="rank">#{idx + 1}</span>
+                        <span className="score">{entry.score}</span>
+                        <span className="date">
+                          {new Date(entry.timestamp).toLocaleDateString()}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
             </div>
           )}
 
@@ -137,6 +238,7 @@ export default function BoxCatchGame() {
               <div className="result-message">
                 {misses} misses · {avgReaction || '--'}ms avg ·{' '}
                 <span style={{ color: difficultyColor }}>{difficulty.label}</span>
+                {isNewTop && <span className="new-top-badge">🎉 NEW TOP SCORE!</span>}
               </div>
               <button type="button" className="retry-btn" onClick={startGame}>
                 Play Again
@@ -148,6 +250,7 @@ export default function BoxCatchGame() {
 
       {gameState === 'running' && (
         <div className="boxcatch-controls">
+          <span className="timer-display">⏱️ {formatTime(timeRemaining)}</span>
           <span
             className="difficulty-badge"
             style={{ color: difficultyColor, borderColor: difficultyColor }}

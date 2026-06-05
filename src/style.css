@@ -204,6 +204,19 @@ main {
     font-weight: 600;
 }
 
+.new-top-badge {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--accent-yellow);
+    margin-top: 10px;
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
 .retry-btn {
     padding: 15px 30px;
     border: none;
@@ -400,6 +413,169 @@ footer {
     background: linear-gradient(135deg, var(--bg-secondary), #ff004030);
 }
 
+/* Timer setup styles */
+.timer-setup {
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--bg-game);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.timer-setup label {
+    display: block;
+    font-size: 1rem;
+    color: var(--accent-green);
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.timer-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.timer-input {
+    padding: 10px 15px;
+    border: 2px solid var(--accent-green);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 120px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.timer-input:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    border-color: var(--accent-blue);
+}
+
+.timer-hint {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Timer display during game */
+.timer-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    padding: 8px 16px;
+    border: 2px solid var(--accent-blue);
+    border-radius: 10px;
+    background: rgba(0, 204, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+    animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Top scores panel */
+.view-scores-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: 2px solid var(--accent-yellow);
+    background: transparent;
+    color: var(--accent-yellow);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.view-scores-btn:hover {
+    background: var(--accent-yellow);
+    color: var(--bg-primary);
+    box-shadow: var(--neon-glow);
+}
+
+.top-scores-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--bg-game);
+    border: 2px solid var(--accent-yellow);
+    border-radius: 15px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.top-scores-panel h3 {
+    text-align: center;
+    color: var(--accent-yellow);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.top-scores-list {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.top-score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-yellow);
+    transition: all 0.2s ease;
+}
+
+.top-score-item:hover {
+    background: rgba(255, 170, 0, 0.1);
+    transform: translateX(5px);
+}
+
+.top-score-item .rank {
+    color: var(--accent-yellow);
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 40px;
+}
+
+.top-score-item .score {
+    color: var(--accent-green);
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex: 1;
+    text-align: center;
+}
+
+.top-score-item .date {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    min-width: 100px;
+    text-align: right;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .container {
@@ -475,6 +651,10 @@ footer {
         padding: 8px 16px;
         font-size: 0.8rem;
     }
+
+    .timer-display {
+        font-size: 1.2rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -509,6 +689,37 @@ footer {
         margin: 20px auto;
         width: 90%;
     }
+
+    .timer-setup {
+        margin: 20px 0;
+        padding: 15px;
+    }
+
+    .timer-input {
+        width: 100px;
+        padding: 8px 12px;
+    }
+
+    .view-scores-btn {
+        margin-top: 10px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .top-scores-panel {
+        margin-top: 15px;
+        padding: 15px;
+    }
+
+    .top-score-item {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .top-score-item .date {
+        width: 100%;
+        text-align: left;
+    }
 }
 
 /* Touch-friendly sizing for mobile */
@@ -519,7 +730,8 @@ footer {
     .sound-btn,
     .clear-btn,
     .game-select-btn,
-    .stop-btn {
+    .stop-btn,
+    .view-scores-btn {
         min-height: 44px;
         min-width: 44px;
     }

@@ -55,3 +55,45 @@ export function loadBoxCatchBest() {
 export function saveBoxCatchBest(score) {
   localStorage.setItem('boxCatchBestScore', String(score));
 }
+
+// Top 10 scores management
+export function loadBoxCatchTopScores() {
+  const saved = localStorage.getItem('boxCatchTopScores');
+  return saved ? JSON.parse(saved) : [];
+}
+
+export function saveBoxCatchTopScores(scores) {
+  localStorage.setItem('boxCatchTopScores', JSON.stringify(scores));
+}
+
+export function addToTopScores(score) {
+  let topScores = loadBoxCatchTopScores();
+  
+  // Add new score with timestamp
+  topScores.push({
+    score,
+    timestamp: new Date().toISOString(),
+  });
+  
+  // Sort by score descending
+  topScores.sort((a, b) => b.score - a.score);
+  
+  // Keep only top 10
+  topScores = topScores.slice(0, 10);
+  
+  saveBoxCatchTopScores(topScores);
+  return topScores;
+}
+
+// Timer utilities
+export function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+export function isNewTopScore(score) {
+  const topScores = loadBoxCatchTopScores();
+  if (topScores.length < 10) return true;
+  return score > topScores[topScores.length - 1].score;
+}

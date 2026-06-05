@@ -30,45 +30,65 @@ export function getColorForTime(time) {
   return 'var(--text-secondary)';
 }
 
+// Single audio context instance to prevent sound issues
+let audioContext = null;
+
+function getAudioContext() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  // Resume audio context if suspended (required for user interaction)
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+  return audioContext;
+}
+
 export function playSound(type, soundEnabled) {
   if (!soundEnabled) return;
 
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const oscillator = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
+  try {
+    const ctx = getAudioContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
 
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
 
-  switch (type) {
-    case 'start':
-      oscillator.frequency.value = 440;
-      gainNode.gain.value = 0.1;
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.1);
-      break;
-    case 'go':
-      oscillator.frequency.value = 880;
-      gainNode.gain.value = 0.2;
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.2);
-      break;
-    case 'success':
-      oscillator.frequency.value = 660;
-      gainNode.gain.value = 0.15;
-      oscillator.start();
-      oscillator.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 0.2);
-      oscillator.stop(audioContext.currentTime + 0.3);
-      break;
-    case 'fail':
-      oscillator.frequency.value = 220;
-      gainNode.gain.value = 0.1;
-      oscillator.start();
-      oscillator.frequency.linearRampToValueAtTime(110, audioContext.currentTime + 0.3);
-      oscillator.stop(audioContext.currentTime + 0.3);
-      break;
-    default:
-      break;
+    const now = ctx.currentTime;
+
+    switch (type) {
+      case 'start':
+        oscillator.frequency.value = 440;
+        gainNode.gain.value = 0.1;
+        oscillator.start(now);
+        oscillator.stop(now + 0.1);
+        break;
+      case 'go':
+        oscillator.frequency.value = 880;
+        gainNode.gain.value = 0.2;
+        oscillator.start(now);
+        oscillator.stop(now + 0.2);
+        break;
+      case 'success':
+        oscillator.frequency.value = 660;
+        gainNode.gain.value = 0.15;
+        oscillator.start(now);
+        oscillator.frequency.linearRampToValueAtTime(880, now + 0.2);
+        oscillator.stop(now + 0.3);
+        break;
+      case 'fail':
+        oscillator.frequency.value = 220;
+        gainNode.gain.value = 0.1;
+        oscillator.start(now);
+        oscillator.frequency.linearRampToValueAtTime(110, now + 0.3);
+        oscillator.stop(now + 0.3);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error('Error playing sound:', error);
   }
 }
 

@@ -249,7 +249,7 @@ export default function ReactionGame({ onBack }) {
       )}
 
       <header>
-        <h1>⚡ Reaction Battle</h1>
+        <h1><span className="brand-logo" aria-hidden="true">RB</span> Reaction Battle</h1>
         <div className="game-select">
           <button
             type="button"
@@ -279,7 +279,7 @@ export default function ReactionGame({ onBack }) {
           onClick={() => setMode('pro')}
           onTouchStart={stopPropagation}
         >
-          🔥 Pro Mode
+          PRO MODE
         </button>
       </div>
 
@@ -305,7 +305,7 @@ export default function ReactionGame({ onBack }) {
               id="readyScreen"
               className={`screen${isScreenActive('ready', gameState) ? ' active' : ''}`}
             >
-              <h2>🟢 GO!</h2>
+              <h2><span className="status-mark" aria-hidden="true">GO</span> GO!</h2>
               <p>Click as fast as you can!</p>
             </div>
 
@@ -313,7 +313,7 @@ export default function ReactionGame({ onBack }) {
               id="tooEarlyScreen"
               className={`screen${isScreenActive('tooEarly', gameState) ? ' active' : ''}`}
             >
-              <h2>❌ Too Early!</h2>
+              <h2><span className="status-mark status-error" aria-hidden="true">!</span> Too Early!</h2>
               <p>Wait for green next time</p>
               <RetryButton isMobile={isMobile} onRetry={resetGame}>
                 Try Again
@@ -366,7 +366,7 @@ export default function ReactionGame({ onBack }) {
         </div>
 
         <div className="leaderboard-section">
-          <h2>🏆 Leaderboard</h2>
+          <h2><span className="status-mark" aria-hidden="true">#</span> Leaderboard</h2>
           <div className="leaderboard-tabs">
             <button
               type="button"
@@ -413,7 +413,7 @@ export default function ReactionGame({ onBack }) {
           onClick={() => setSoundEnabled((v) => !v)}
           onTouchStart={stopPropagation}
         >
-          {soundEnabled ? '🔊' : '🔇'}
+          <span aria-hidden="true">{soundEnabled ? 'SOUND' : 'MUTE'}</span>
         </button>
         <button
           type="button"

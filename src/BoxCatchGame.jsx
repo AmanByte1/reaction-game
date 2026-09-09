@@ -165,7 +165,7 @@ export default function BoxCatchGame({ onBack }) {
       )}
       
       <header>
-        <h1>📦 Box Catch</h1>
+        <h1><span className="brand-logo" aria-hidden="true">BC</span> Box Catch</h1>
       </header>
 
       <div
@@ -185,7 +185,7 @@ export default function BoxCatchGame({ onBack }) {
         <div className="game-content">
           {gameState === 'idle' && (
             <div className="screen active">
-              <h2>📦 Box Catch</h2>
+              <h2><span className="brand-logo" aria-hidden="true">BC</span> Box Catch</h2>
               <p>Click the box before it jumps away!</p>
               
               <div className="timer-setup">
@@ -224,7 +224,7 @@ export default function BoxCatchGame({ onBack }) {
 
               {showTopScores && (
                 <div className="top-scores-panel">
-                  <h3>🏆 Top 10 Scores</h3>
+                  <h3><span className="status-mark" aria-hidden="true">#</span> Top 10 Scores</h3>
                   <ol className="top-scores-list">
                     {topScores.map((entry, idx) => (
                       <li key={idx} className="top-score-item">
@@ -248,7 +248,7 @@ export default function BoxCatchGame({ onBack }) {
               <div className="result-message">
                 {misses} misses · {avgReaction || '--'}ms avg ·{' '}
                 <span style={{ color: difficultyColor }}>{difficulty.label}</span>
-                {isNewTop && <span className="new-top-badge">🎉 NEW TOP SCORE!</span>}
+                {isNewTop && <span className="new-top-badge">NEW TOP SCORE!</span>}
               </div>
               <button type="button" className="retry-btn" onClick={startGame}>
                 Play Again
@@ -260,7 +260,7 @@ export default function BoxCatchGame({ onBack }) {
 
       {gameState === 'running' && (
         <div className="boxcatch-controls">
-          <span className="timer-display">⏱️ {formatTime(timeRemaining)}</span>
+          <span className="timer-display"><span className="status-mark" aria-hidden="true">T</span> {formatTime(timeRemaining)}</span>
           <span
             className="difficulty-badge"
             style={{ color: difficultyColor, borderColor: difficultyColor }}
@@ -300,7 +300,7 @@ export default function BoxCatchGame({ onBack }) {
           className="sound-btn"
           onClick={() => setSoundEnabled((v) => !v)}
         >
-          {soundEnabled ? '🔊' : '🔇'}
+          <span aria-hidden="true">{soundEnabled ? 'SOUND' : 'MUTE'}</span>
         </button>
       </footer>
     </div>

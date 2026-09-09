@@ -14,12 +14,12 @@ export function saveScores(scores) {
 }
 
 export function getMessage(time) {
-  if (time < 200) return '⚡ LIGHTNING FAST!';
-  if (time < 250) return '🔥 Amazing!';
-  if (time < 300) return '🎯 Great job!';
-  if (time < 350) return '👍 Good!';
-  if (time < 400) return '😊 Not bad!';
-  return '🐌 Keep practicing!';
+  if (time < 200) return 'LIGHTNING FAST!';
+  if (time < 250) return 'AMAZING!';
+  if (time < 300) return 'GREAT JOB!';
+  if (time < 350) return 'GOOD!';
+  if (time < 400) return 'NOT BAD!';
+  return 'KEEP PRACTICING!';
 }
 
 export function getColorForTime(time) {

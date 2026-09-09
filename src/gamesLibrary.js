@@ -721,14 +721,14 @@ export const GAMES_LIBRARY = [
 
 // Game categories for filtering
 export const GAME_CATEGORIES = [
-  { id: 'all', label: '🎮 All Games', count: 100 },
-  { id: 'Reaction', label: '⚡ Reaction', count: 15 },
-  { id: 'Action', label: '📦 Action', count: 15 },
-  { id: 'Puzzle', label: '💎 Puzzle', count: 15 },
-  { id: 'Arcade', label: '👾 Arcade', count: 15 },
-  { id: 'Sports', label: '⚽ Sports', count: 15 },
-  { id: 'Brain', label: '🧠 Brain', count: 15 },
-  { id: 'Music', label: '🎵 Music', count: 10 },
+  { id: 'all', label: 'All Games', count: 100 },
+  { id: 'Reaction', label: 'Reaction', count: 15 },
+  { id: 'Action', label: 'Action', count: 15 },
+  { id: 'Puzzle', label: 'Puzzle', count: 15 },
+  { id: 'Arcade', label: 'Arcade', count: 15 },
+  { id: 'Sports', label: 'Sports', count: 15 },
+  { id: 'Brain', label: 'Brain', count: 15 },
+  { id: 'Music', label: 'Music', count: 10 },
 ];
 
 // Get games by category

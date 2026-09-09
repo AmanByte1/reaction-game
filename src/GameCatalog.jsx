@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GAMES_LIBRARY, GAME_CATEGORIES, getGamesByCategory } from './gamesLibrary';
+import { getGameMark, getGameName } from './ArcadeGame';
 
 export default function GameCatalog({ onGameSelect, category, onCategoryChange }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,14 +17,14 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
     <div className="game-catalog">
       <header className="catalog-header">
         <div className="header-top">
-          <h1>🎮 Reaction Arcade</h1>
+          <h1><span className="brand-logo" aria-hidden="true">RA</span> Reaction Arcade</h1>
           <p className="subtitle">100+ Mini Games Library</p>
         </div>
         
         <div className="search-bar">
           <input
             type="text"
-            placeholder="🔍 Search games..."
+            placeholder="Search games..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
@@ -55,7 +56,7 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
         {/* Main Content */}
         <main className="games-main">
           <div className="catalog-header-secondary">
-            <h2>{selectedCategory === 'all' ? '🎮 All Games' : `${selectedCategory} Games`}</h2>
+            <h2>{selectedCategory === 'all' ? 'All Games' : `${selectedCategory} Games`}</h2>
             <p className="game-count">{filteredGames.length} game{filteredGames.length !== 1 ? 's' : ''}</p>
           </div>
 
@@ -68,8 +69,8 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
                   onClick={() => onGameSelect(game.id)}
                 >
                   <div className="game-card-content">
-                    <div className="game-emoji">{game.emoji}</div>
-                    <h3 className="game-title">{game.label}</h3>
+                    <div className={`game-logo logo-${game.category.toLowerCase()}`} aria-hidden="true">{getGameMark(game)}</div>
+                    <h3 className="game-title">{getGameName(game)}</h3>
                     <p className="game-description">{game.description}</p>
                     <span className="game-category">{game.category}</span>
                   </div>
@@ -97,7 +98,7 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
       </div>
 
       <footer className="catalog-footer">
-        <p>🌐 Connecting to domain...</p>
+        <p><span className="status-mark" aria-hidden="true">●</span> Arcade network online</p>
       </footer>
     </div>
   );

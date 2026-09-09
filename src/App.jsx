@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactionGame from './ReactionGame';
 import BoxCatchGame from './BoxCatchGame';
 import GameCatalog from './GameCatalog';
+import ArcadeGame from './ArcadeGame';
 import { GAMES_LIBRARY } from './gamesLibrary';
 
 export default function App() {
@@ -37,12 +38,7 @@ export default function App() {
   if (currentGame && currentGame !== 'reaction' && currentGame !== 'boxcatch') {
     const gameConfig = GAMES_LIBRARY.find(g => g.id === currentGame);
     if (gameConfig) {
-      const GameComponent = gameConfig.component;
-      return (
-        <>
-          <GameComponent onBack={handleBackToMenu} />
-        </>
-      );
+      return <ArcadeGame game={gameConfig} onBack={handleBackToMenu} />;
     }
   }
 

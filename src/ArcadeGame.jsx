@@ -1,15 +1,59 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { playSound } from './gameUtils';
 
 const ROUNDS = 6;
 const NOTES = ['DO', 'RE', 'MI', 'FA', 'SOL'];
 
 export function getGameName(game) {
-  return game.label.replace(/^\S+\s+/, '');
+  return game.emoji ? game.label.replace(`${game.emoji} `, '') : game.label;
 }
 
 export function getGameMark(game) {
   return getGameName(game).split(/\s+/).map((word) => word[0]).join('').slice(0, 3).toUpperCase();
+}
+
+export function getGameIcon(game) {
+  const iconMap = {
+    reaction: 'bi-lightning-charge-fill', memory: 'bi-grid-3x3-gap-fill', color: 'bi-palette-fill', sound: 'bi-volume-up-fill',
+    speed: 'bi-stopwatch-fill', visual: 'bi-eye-fill', flash: 'bi-brightness-high-fill', number: 'bi-123', light: 'bi-lightbulb-fill',
+    target: 'bi-bullseye', pattern: 'bi-diagram-3-fill', sequence: 'bi-list-ol', box: 'bi-box-fill', ball: 'bi-circle-fill',
+    brick: 'bi-bricks', asteroid: 'bi-meteor-fill', survival: 'bi-shield-fill-check', platform: 'bi-controller', enemy: 'bi-bug-fill',
+    power: 'bi-lightning-fill', flight: 'bi-airplane-fill', combo: 'bi-fire', shield: 'bi-shield-fill', race: 'bi-speedometer2',
+    treasure: 'bi-gem', wave: 'bi-water', fire: 'bi-fire', match: 'bi-stars', slider: 'bi-sliders', shape: 'bi-hexagon-fill',
+    logic: 'bi-bezier2', word: 'bi-input-cursor-text', sudoku: 'bi-grid-3x3', pipe: 'bi-sign-turn-right-fill', block: 'bi-stack',
+    gravity: 'bi-arrow-down-circle-fill', path: 'bi-signpost-2-fill', rotation: 'bi-arrow-repeat', cascade: 'bi-rainbow', symmetry: 'bi-intersect',
+    bridge: 'bi-bridge', space: 'bi-stars', pac: 'bi-circle-half', snake: 'bi-bezier', dino: 'bi-egg-fill', bird: 'bi-feather-fill',
+    zombie: 'bi-person-x-fill', meteor: 'bi-meteor', robot: 'bi-robot', alien: 'bi-person-raised-hand', missile: 'bi-rocket-fill',
+    pong: 'bi-tablet-landscape', galaga: 'bi-stars', dig: 'bi-hammer', time: 'bi-clock-fill', donkey: 'bi-arrow-up-circle-fill',
+    basketball: 'bi-dribbble', soccer: 'bi-circle', tennis: 'bi-circle-fill', golf: 'bi-flag-fill', bowling: 'bi-circle-half',
+    hockey: 'bi-slash-circle', badminton: 'bi-wind', volleyball: 'bi-circle', archery: 'bi-bullseye', billiards: 'bi-circle-fill',
+    dart: 'bi-arrow-up-right', ping: 'bi-tablet', cricket: 'bi-slash-lg', baseball: 'bi-circle-fill', football: 'bi-shield-fill',
+    iq: 'bi-mortarboard-fill', math: 'bi-calculator-fill', trivia: 'bi-question-circle-fill', spot: 'bi-search', focus: 'bi-eye-fill',
+    solve: 'bi-puzzle-fill', gate: 'bi-toggles', equation: 'bi-rulers', code: 'bi-lock-fill', 'visual-memory': 'bi-camera-fill',
+    riddle: 'bi-chat-quote-fill', geography: 'bi-globe-americas', science: 'bi-beaker-fill', piano: 'bi-music-note-list', rhythm: 'bi-music-note-beamed',
+    beat: 'bi-soundwave', note: 'bi-music-note', drum: 'bi-disc-fill', guitar: 'bi-music-note', music: 'bi-mic-fill', tempo: 'bi-stopwatch-fill',
+    melody: 'bi-music-note-list', duel: 'bi-people-fill', grid: 'bi-grid-3x3-gap-fill', quick: 'bi-hand-index-fill', split: 'bi-arrows-expand-vertical',
+    quad: 'bi-people-fill', four: 'bi-signpost-split-fill', quiz: 'bi-patch-question-fill',
+  };
+  const match = Object.keys(iconMap).find((key) => game.id.includes(key));
+  return iconMap[match] || (game.category === 'Multiplayer' ? 'bi-people-fill' : 'bi-controller');
+}
+
+export function getGameLogoStyle(game) {
+  const hash = [...game.id].reduce((total, character) => total * 33 + character.charCodeAt(0), 7);
+  const hue = Math.abs(hash) % 360;
+  const angle = (Math.abs(hash >> 4) % 7) - 3;
+  const radius = `${8 + (Math.abs(hash >> 8) % 18)}% ${18 + (Math.abs(hash >> 12) % 22)}% ${10 + (Math.abs(hash >> 16) % 20)}% ${20 + (Math.abs(hash >> 20) % 18)}%`;
+  return { '--logo-hue': hue, '--logo-angle': `${angle}deg`, '--logo-radius': radius };
+}
+
+export function GameLogo({ game, className = '', style }) {
+  return (
+    <span className={`${className} game-logo-shell`} style={style} aria-hidden="true">
+      <i className={`bi ${getGameIcon(game)}`} />
+      <span className="logo-fallback">{getGameMark(game)}</span>
+    </span>
+  );
 }
 
 function seedFor(id, round) {
@@ -60,12 +104,19 @@ const modeCopy = {
   tap: ['Arcade mode', 'Make the right move and keep your streak alive.'],
 };
 
+function timeLimitFor(mode, round) {
+  const base = { memory: 11, pattern: 7, quiz: 9, sequence: 8, timing: 4, target: 6, rhythm: 8, stack: 7, lane: 6, tap: 5 }[mode];
+  return Math.max(3, base - Math.floor(round / 2));
+}
+
 function titleCase(value) {
   return value.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 export default function ArcadeGame({ game, onBack }) {
   const mode = modeFor(game.id, game.category);
+  const scoreKey = `arcade-best-${game.id}`;
+  const [runSeed] = useState(() => Math.floor(Math.random() * 100000));
   const [round, setRound] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -74,32 +125,51 @@ export default function ArcadeGame({ game, onBack }) {
   const [selected, setSelected] = useState([]);
   const [memoryVisible, setMemoryVisible] = useState(true);
   const [roundStarted, setRoundStarted] = useState(() => Date.now());
+  const [timeLeft, setTimeLeft] = useState(timeLimitFor(mode, 0));
+  const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem(scoreKey) || 0));
+  const [sequenceVisible, setSequenceVisible] = useState(mode === 'sequence' || mode === 'rhythm');
+  const roundResolved = useRef(false);
 
-  const challenge = useMemo(() => makeMathChallenge(game.id, round), [game.id, round]);
-  const sequence = useMemo(() => valuesFor(game.id, round, mode === 'rhythm' ? 4 : 3, mode === 'rhythm' ? NOTES.length : 5), [game.id, mode, round]);
-  const memoryPattern = useMemo(() => [...new Set(valuesFor(game.id, round, 4, 9))], [game.id, round]);
-  const patternTarget = useMemo(() => seedFor(game.id, round) % 5, [game.id, round]);
+  const challenge = useMemo(() => makeMathChallenge(`${game.id}-${runSeed}`, round), [game.id, runSeed, round]);
+  const sequence = useMemo(() => valuesFor(`${game.id}-${runSeed}`, round, mode === 'rhythm' ? 4 : 3, mode === 'rhythm' ? NOTES.length : 5), [game.id, mode, round, runSeed]);
+  const memoryPattern = useMemo(() => [...new Set(valuesFor(`${game.id}-${runSeed}`, round, 4, 9))], [game.id, round, runSeed]);
+  const patternTarget = useMemo(() => seedFor(`${game.id}-${runSeed}`, round) % 5, [game.id, round, runSeed]);
   const targetPosition = useMemo(() => ({
     left: `${15 + ((round * 37 + game.id.length * 11) % 70)}%`,
     top: `${18 + ((round * 29 + game.id.length * 7) % 62)}%`,
   }), [game.id, round]);
-  const safeLane = seedFor(game.id, round) % 3;
+  const safeLane = seedFor(`${game.id}-${runSeed}`, round) % 3;
+  const quizOptions = useMemo(() => [challenge.answer, challenge.answer + 2, Math.max(1, challenge.answer - 3)].sort(() => Math.random() - 0.5), [challenge]);
 
   useEffect(() => {
+    roundResolved.current = false;
     setSelected([]);
     setMemoryVisible(mode === 'memory');
+    setSequenceVisible(mode === 'sequence' || mode === 'rhythm');
     setRoundStarted(Date.now());
     if (mode === 'memory') {
       const timer = setTimeout(() => setMemoryVisible(false), 900 + round * 80);
+      return () => clearTimeout(timer);
+    }
+    if (mode === 'sequence' || mode === 'rhythm') {
+      const timer = setTimeout(() => setSequenceVisible(false), 1300);
       return () => clearTimeout(timer);
     }
     return undefined;
   }, [game.id, mode, round]);
 
   const finishRound = (won, points, text) => {
-    setScore((current) => current + points);
+    if (roundResolved.current) return;
+    roundResolved.current = true;
+    const milestoneBonus = won && (round + 1) % 3 === 0 ? 50 : 0;
+    const nextScore = score + points + milestoneBonus;
+    setScore(nextScore);
+    if (nextScore > bestScore) {
+      setBestScore(nextScore);
+      localStorage.setItem(scoreKey, String(nextScore));
+    }
     setStreak((current) => (won ? current + 1 : 0));
-    setMessage(text);
+    setMessage(milestoneBonus ? `${text} Bonus +${milestoneBonus}.` : text);
     playSound(won ? 'success' : 'fail', true);
     if (round + 1 >= ROUNDS) setStatus('finished');
     else {
@@ -107,6 +177,20 @@ export default function ArcadeGame({ game, onBack }) {
       setRound((current) => current + 1);
     }
   };
+
+  useEffect(() => {
+    if (status !== 'playing') return undefined;
+    const limit = timeLimitFor(mode, round);
+    setTimeLeft(limit);
+    const interval = setInterval(() => {
+      setTimeLeft((current) => Math.max(0, Number((current - 0.1).toFixed(1))));
+    }, 100);
+    const timeout = setTimeout(() => finishRound(false, 0, 'Time expired.'), limit * 1000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [game.id, mode, round, status]);
 
   const checkSequence = (value) => {
     const next = [...selected, value];
@@ -161,15 +245,14 @@ export default function ArcadeGame({ game, onBack }) {
 
   const renderBoard = () => {
     if (mode === 'quiz') {
-      const options = [challenge.answer, challenge.answer + 2, Math.max(1, challenge.answer - 3)];
-      return <div className="quiz-options">{options.map((option) => <button key={option} className="arcade-choice" onClick={() => handleAction(option)}>{option}</button>)}</div>;
+      return <div className="quiz-options">{quizOptions.map((option) => <button key={option} className="arcade-choice" onClick={() => handleAction(option)}>{option}</button>)}</div>;
     }
-    if (mode === 'target') return <div className="target-board"><button className="moving-target" style={targetPosition} onClick={() => handleAction(patternTarget)} aria-label="Hit target"><span className="target-mark">{getGameMark(game)}</span></button></div>;
+    if (mode === 'target') return <div className="target-board"><button className="moving-target" style={targetPosition} onClick={() => handleAction(patternTarget)} aria-label="Hit target"><GameLogo game={game} className="target-mark" /></button></div>;
     if (mode === 'timing') return <button className="timing-button arcade-primary" onClick={() => handleAction(0)}>HIT WINDOW</button>;
     if (mode === 'lane') return <div className="lane-board">{[0, 1, 2].map((lane) => <button key={lane} className={`lane lane-${lane}`} onClick={() => handleAction(lane)}>LANE {lane + 1}</button>)}</div>;
     if (mode === 'stack') return <div className="stack-board">{[0, 1, 2].map((piece) => <button key={piece} className={`stack-piece stack-${piece}`} onClick={() => handleAction(piece)}>BLOCK {piece + 1}</button>)}</div>;
     if (mode === 'memory') return <div className="memory-board">{Array.from({ length: 9 }, (_, cell) => <button key={cell} className={`memory-cell ${memoryVisible && memoryPattern.includes(cell) ? 'revealed' : ''} ${selected.includes(cell) ? 'picked' : ''}`} disabled={memoryVisible} onClick={() => handleAction(cell)}>{memoryVisible && memoryPattern.includes(cell) ? 'ON' : ''}</button>)}</div>;
-    if (mode === 'sequence' || mode === 'rhythm') return <div className="arcade-grid sequence-grid">{[0, 1, 2, 3, 4].map((value) => <button key={value} className={`arcade-tile tile-${value}`} onClick={() => handleAction(value)}>{mode === 'rhythm' ? NOTES[value] : value + 1}</button>)}</div>;
+    if (mode === 'sequence' || mode === 'rhythm') return <div className="arcade-grid sequence-grid">{[0, 1, 2, 3, 4].map((value) => <button key={value} className={`arcade-tile tile-${value}`} disabled={sequenceVisible} onClick={() => handleAction(value)}>{mode === 'rhythm' ? NOTES[value] : value + 1}</button>)}</div>;
     if (mode === 'pattern') return <div className="arcade-grid pattern-grid">{[0, 1, 2, 3, 4].map((value) => <button key={value} className={`arcade-tile tile-${value}`} onClick={() => handleAction(value)}>{value === patternTarget ? 'MATCH' : 'SHIFT'}</button>)}</div>;
     return <div className="arcade-grid">{[0, 1, 2, 3, 4].map((value) => <button key={value} className={`arcade-tile tile-${value}`} onClick={() => handleAction(value)}>{['A', 'B', 'C', 'D', 'E'][value]}</button>)}</div>;
   };
@@ -178,14 +261,14 @@ export default function ArcadeGame({ game, onBack }) {
     <main className={`arcade-game arcade-${mode}`}>
       <header className="arcade-topbar">
         <button className="arcade-back" onClick={onBack} aria-label="Back to games">← Games</button>
-        <div><span className="arcade-kicker">{game.category} / {modeCopy[mode][0]} / Round {Math.min(round + 1, ROUNDS)} of {ROUNDS}</span><h1><span className="arcade-logo" aria-hidden="true">{getGameMark(game)}</span>{getGameName(game)}</h1></div>
-        <div className="arcade-score"><span>Score</span><strong>{score}</strong></div>
+        <div><span className="arcade-kicker">{game.category} / {modeCopy[mode][0]} / Round {Math.min(round + 1, ROUNDS)} of {ROUNDS}</span><h1><GameLogo game={game} className="arcade-logo" style={getGameLogoStyle(game)} />{getGameName(game)}</h1></div>
+        <div className="arcade-score"><span>Score</span><strong>{score}</strong><small>COMBO x{Math.max(1, streak + 1)}</small><small className={timeLeft <= 2 ? 'timer-warning' : ''}>TIME {timeLeft.toFixed(1)}s</small></div>
       </header>
       <section className="arcade-stage">
         {status === 'finished' ? (
-          <div className="arcade-result"><span className="result-mark">✦</span><p className="arcade-kicker">Run complete</p><h2>{titleCase(game.id)}</h2><strong className="final-score">{score} pts</strong><p>{score >= 650 ? 'Excellent run.' : 'Good start. One more run?'}</p><button className="arcade-primary" onClick={restart}>Play again</button></div>
+          <div className="arcade-result"><span className="result-mark">✦</span><p className="arcade-kicker">Run complete</p><h2>{titleCase(game.id)}</h2><strong className="final-score">{score} pts</strong><p>{score >= 650 ? 'Excellent run.' : 'Good start. One more run?'}</p><p className="best-score">Personal best: {bestScore} pts</p><button className="arcade-primary" onClick={restart}>Play again</button></div>
         ) : (
-          <><div className="arcade-intro"><p className="arcade-kicker">{modeCopy[mode][0]}</p><h2>{game.description}</h2><p className="arcade-feedback">{message || (mode === 'quiz' ? `Solve: ${challenge.prompt}` : mode === 'memory' ? (memoryVisible ? 'Memorize the lit cells.' : 'Repeat the pattern.') : mode === 'sequence' || mode === 'rhythm' ? `Signal: ${sequence.map((entry) => mode === 'rhythm' ? NOTES[entry] : entry + 1).join(' - ')}` : modeCopy[mode][1])}</p></div>{renderBoard()}</>
+          <><div className="arcade-intro"><p className="arcade-kicker">{modeCopy[mode][0]}</p><h2>{game.description}</h2><p className="arcade-feedback">{message || (mode === 'quiz' ? `Solve: ${challenge.prompt}` : mode === 'memory' ? (memoryVisible ? 'Memorize the lit cells.' : 'Repeat the pattern.') : mode === 'sequence' || mode === 'rhythm' ? (sequenceVisible ? `Signal: ${sequence.map((entry) => mode === 'rhythm' ? NOTES[entry] : entry + 1).join(' - ')}` : 'Input the sequence from memory.') : modeCopy[mode][1])}</p></div>{renderBoard()}</>
         )}
       </section>
     </main>

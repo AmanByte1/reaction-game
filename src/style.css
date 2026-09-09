@@ -51,6 +51,120 @@ html, body, #root {
   z-index: 100;
 }
 
+/* Final home catalog overrides: keep the game shelf readable after legacy styles. */
+.game-catalog .catalog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  align-items: center;
+  gap: 2rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+}
+.game-catalog .header-top { margin-bottom: 0; }
+.game-catalog .games-grid {
+  grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+  grid-auto-rows: 238px;
+  gap: 1.1rem;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2rem;
+}
+.game-catalog .game-card { height: 238px; padding: 1.15rem; }
+.game-catalog .game-card-content { gap: .55rem; padding-bottom: 2.6rem; }
+.game-catalog .game-category { margin-bottom: 2.5rem; }
+.game-catalog .game-logo { width: 4.3rem; height: 4.3rem; font-size: 1rem; }
+.game-catalog .game-title { font-size: .94rem; }
+.game-catalog .game-description { font-size: .72rem; }
+.game-catalog .game-card { isolation: isolate; }
+.game-catalog .game-card-hover { position: static; align-self: center; flex: 0 0 auto; margin-top: .35rem; transform: none; }
+.game-catalog .game-card:hover .game-card-hover, .game-catalog .game-card:focus-visible .game-card-hover { transform: none; }
+.game-catalog .game-card-content { flex: 1 1 auto; min-height: 0; padding-bottom: 0; }
+.game-catalog .game-category { margin-bottom: 0; }
+
+/* In-flow play row must not inherit the old absolute-position translation. */
+.game-catalog .game-card-hover,
+.game-catalog .game-card:hover .game-card-hover,
+.game-catalog .game-card:focus-visible .game-card-hover { left: auto; right: auto; transform: none; }
+.game-catalog .game-card-hover { margin-top: 2.3rem; }
+.game-catalog .game-card::after { content: ''; position: absolute; inset: 12%; border: 1px solid transparent; opacity: 0; transform: scale(.92); transition: opacity .25s ease, transform .25s ease, border-color .25s ease; pointer-events: none; }
+.game-catalog .game-card:hover::after, .game-catalog .game-card:focus-visible::after { border-color: hsl(var(--logo-hue) 90% 72% / .5); opacity: 1; transform: scale(1); }
+.game-catalog .game-card:hover .game-logo, .game-catalog .game-card:focus-visible .game-logo { animation: logo-hover-pop .55s cubic-bezier(.2,.8,.2,1); }
+.game-catalog .game-card-hover { top: auto; left: 50%; right: auto; bottom: .75rem; width: auto; display: inline-flex; align-items: center; gap: .4rem; padding: .55rem .8rem; border: 2px solid var(--retro-amber); background: rgba(16, 19, 24, .92); color: var(--retro-amber); transform: translateX(-50%) scale(.82); opacity: 0; transition: opacity .2s ease, transform .2s ease; pointer-events: none; }
+.game-catalog .game-card:hover .game-card-hover, .game-catalog .game-card:focus-visible .game-card-hover { transform: translateX(-50%) scale(1); opacity: 1; }
+.play-icon { display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; color: var(--retro-ink); background: var(--retro-amber); }
+.play-icon i { font-size: 1rem; line-height: 1; }
+@keyframes logo-hover-pop { 0% { transform: rotate(var(--logo-angle)) scale(1); } 55% { transform: rotate(0deg) scale(1.14); } 100% { transform: rotate(var(--logo-angle)) scale(1.06); } }
+
+@media (max-width: 760px) {
+  .game-catalog .catalog-header { grid-template-columns: 1fr; gap: .9rem; }
+  .game-catalog { height: auto; min-height: 100vh; }
+  .game-catalog .catalog-container { display: block; overflow: visible; }
+  .game-catalog .categories-sidebar { position: sticky; top: 0; z-index: 10; width: 100%; height: auto; min-height: 92px; padding: .7rem .75rem .8rem; background: #141b23; border-bottom: 2px solid var(--retro-amber); }
+  .game-catalog .categories-sidebar h3 { padding: 0 .15rem; margin-bottom: .5rem; color: var(--retro-amber); font-size: .7rem; }
+  .game-catalog .category-list { gap: .45rem; min-height: 40px; padding: .1rem .1rem .35rem; overflow-x: auto; overflow-y: hidden; scrollbar-color: var(--retro-cyan) var(--retro-panel); }
+  .game-catalog .category-btn { min-height: 36px; padding: .5rem .75rem; border: 1px solid var(--retro-line); background: var(--retro-panel-light); color: #f7f4eb; }
+  .game-catalog .category-btn:hover, .game-catalog .category-btn.active { padding-left: .75rem; border: 1px solid var(--retro-amber); border-bottom: 3px solid var(--retro-amber); background: rgba(255, 200, 87, .16); color: var(--retro-amber); }
+  .game-catalog .games-main { overflow: visible; }
+  .game-catalog .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 190px; height: auto; overflow: visible; }
+  .game-catalog .game-card { height: 190px; padding: .9rem; }
+  .game-catalog .game-logo { width: 3.5rem; height: 3.5rem; font-size: .8rem; }
+}
+
+@media (min-width: 1100px) {
+  .game-catalog .catalog-header-secondary { padding: 1rem 1.5rem; }
+  .game-catalog .catalog-header-secondary h2 { margin-bottom: .25rem; font-size: 1.35rem; }
+  .game-catalog .games-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: 202px;
+    gap: .9rem;
+  }
+  .game-catalog .game-card { height: 202px; padding: 1rem 1rem 3.7rem; }
+  .game-catalog .game-logo { width: 3.8rem; height: 3.8rem; font-size: .9rem; }
+  .game-catalog .game-title { font-size: .86rem; }
+  .game-catalog .game-description { font-size: .68rem; }
+}
+
+/* Final alignment override for the in-flow play row. */
+.game-catalog .game-card-hover,
+.game-catalog .game-card:hover .game-card-hover,
+.game-catalog .game-card:focus-visible .game-card-hover {
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  transform: none;
+}
+
+/* Keep the play control in layout flow so it can never overlap card copy. */
+.game-catalog .game-card-hover { position: static; align-self: center; flex: 0 0 auto; margin-top: .35rem; }
+.game-catalog .game-card-content { flex: 1 1 auto; min-height: 0; padding-bottom: 0; }
+.game-catalog .game-category { margin-bottom: 0; }
+
+/* Personalized generated game marks. Each game supplies its own logo variables. */
+.game-catalog .game-logo,
+.arcade-game .arcade-logo,
+.multiplayer-game .arcade-logo,
+.split-duel .arcade-logo {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, hsl(var(--logo-hue) 82% 68%) 0 52%, hsl(var(--logo-hue) 66% 48%) 52% 100%);
+  border-color: hsl(var(--logo-hue) 90% 86%);
+  border-radius: var(--logo-radius);
+  box-shadow: 4px 4px 0 hsl(var(--logo-hue) 48% 25%);
+  transform: rotate(var(--logo-angle));
+}
+.game-catalog .game-logo::before,
+.arcade-game .arcade-logo::before,
+.multiplayer-game .arcade-logo::before,
+.split-duel .arcade-logo::before {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border: 1px solid rgba(255, 255, 255, .55);
+  background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255, 255, 255, .16) 6px 8px);
+  pointer-events: none;
+}
+.game-catalog .game-logo { color: var(--retro-ink); }
+.game-catalog .game-card:hover .game-logo { transform: rotate(calc(var(--logo-angle) * -1)) scale(1.06); }
+
 .header-top {
   margin-bottom: 1.5rem;
 }
@@ -969,6 +1083,9 @@ footer {
 .arcade-score { justify-self: end; text-align: right; display: grid; gap: .15rem; }
 .arcade-score span { color: #9299a7; font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; }
 .arcade-score strong { color: #52d6c7; font-size: 1.65rem; }
+.arcade-score small { color: #9299a7; font: 700 .62rem 'Courier New', monospace; letter-spacing: .08em; }
+.arcade-score .timer-warning { color: var(--retro-pink); animation: timer-pulse .5s steps(2, end) infinite; }
+@keyframes timer-pulse { 50% { opacity: .45; } }
 
 .arcade-stage {
   max-width: 920px;
@@ -1008,6 +1125,99 @@ footer {
   .arcade-stage { min-height: calc(100vh - 105px); padding: 1.2rem; }
   .arcade-intro { margin-bottom: 1.5rem; }
   .target-board { height: 270px; }
+}
+
+/* ==================== HOME ARCADE SHELF ==================== */
+
+.catalog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  align-items: center;
+  gap: 2rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+}
+.header-top { margin-bottom: 0; }
+.catalog-header h1 { font-size: clamp(1.55rem, 3vw, 2.25rem); }
+.catalog-header .subtitle { margin-top: .4rem; }
+.search-input { height: 46px; }
+.categories-sidebar { width: 178px; padding: 1.25rem 0; }
+.categories-sidebar h3 { padding: 0 1rem; margin-bottom: .65rem; }
+.category-list { gap: .2rem; }
+.category-btn { padding: .62rem 1rem; font-size: .8rem; }
+.category-btn:hover, .category-btn.active { padding-left: calc(1rem - 3px); }
+.games-grid {
+  grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+  grid-auto-rows: 218px;
+  gap: 1.1rem;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2rem;
+}
+.game-card { height: 218px; padding: 1.15rem; }
+.game-card-content { gap: .55rem; }
+.game-logo { width: 4.3rem; height: 4.3rem; font-size: 1rem; }
+.game-title { font-size: .94rem; }
+.game-description { font-size: .72rem; }
+.game-card-hover { padding: .7rem; font-size: .78rem; }
+
+@media (max-width: 760px) {
+  .catalog-header { grid-template-columns: 1fr; gap: .9rem; }
+  .catalog-header .search-bar { max-width: none; }
+  .categories-sidebar { width: 100%; }
+  .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 190px; }
+  .game-card { height: 190px; padding: .9rem; }
+  .game-logo { width: 3.5rem; height: 3.5rem; font-size: .8rem; }
+}
+
+/* ==================== CATALOG SHELF LAYOUT ==================== */
+
+.catalog-container { min-height: 0; }
+.games-main { min-width: 0; }
+.catalog-header-secondary { position: sticky; top: 0; z-index: 5; }
+.games-grid {
+  grid-auto-rows: 184px;
+  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+  align-content: start;
+  gap: 1rem;
+  min-height: 0;
+}
+.game-card {
+  height: 184px;
+  min-width: 0;
+  padding: 1rem;
+  justify-content: flex-start;
+}
+.game-card-content { width: 100%; min-width: 0; justify-content: flex-start; gap: .45rem; }
+.game-logo { width: 3.6rem; height: 3.6rem; flex: 0 0 auto; font-size: .9rem; }
+.game-title {
+  width: 100%;
+  min-height: 2.4em;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.game-description {
+  width: 100%;
+  min-height: 2.6em;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.game-category { margin-top: auto; }
+.game-card-hover { padding: .55rem; font-size: .72rem; }
+.game-card:focus-visible { outline: 3px solid var(--retro-cyan); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .games-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 174px;
+    padding: 1rem;
+    gap: .75rem;
+  }
+  .game-card { height: 174px; padding: .75rem; }
+  .game-logo { width: 3rem; height: 3rem; font-size: .75rem; }
+  .game-title { font-size: .82rem; }
+  .game-description { font-size: .68rem; }
 }
 
 /* ==================== RETRO MODERN SKIN ==================== */
@@ -1077,6 +1287,10 @@ body::before {
 .game-category { border-radius: 0; color: var(--retro-cyan); background: rgba(72, 224, 208, .1); }
 .game-card-hover { background: var(--retro-amber); color: var(--retro-ink); }
 .catalog-footer { background: var(--retro-panel); border-top: 2px solid var(--retro-line); }
+.creator-about { margin-top: .45rem; color: #9299a7; font-size: .72rem; }
+.creator-about strong { color: var(--retro-amber); }
+.creator-about a { margin-left: .5rem; color: var(--retro-cyan); text-decoration: none; font-weight: 800; }
+.creator-about a:hover { color: #fff; text-decoration: underline; }
 
 .arcade-game { background-color: var(--retro-ink); background-image: linear-gradient(rgba(72, 224, 208, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(72, 224, 208, .035) 1px, transparent 1px); background-size: 28px 28px; }
 .arcade-stage { border-radius: 0; border: 2px solid var(--retro-line); box-shadow: 8px 8px 0 rgba(0, 0, 0, .34), inset 0 0 0 5px rgba(16, 19, 24, .45); background: radial-gradient(circle at 50% 0, #293a43, #1a2029 55%); }
@@ -1087,6 +1301,7 @@ body::before {
 .arcade-primary:active, .arcade-choice:active, .arcade-tile:active { transform: translate(3px, 3px); box-shadow: none; }
 .arcade-choice { box-shadow: 4px 4px 0 #76581d; }
 .arcade-tile { box-shadow: 4px 4px 0 rgba(0, 0, 0, .38); }
+.arcade-tile:disabled { cursor: wait; filter: grayscale(.6); opacity: .55; }
 .target-board { border: 2px dashed var(--retro-cyan); background-image: radial-gradient(var(--retro-line) 1px, transparent 1px); background-size: 18px 18px; }
 .moving-target { border-radius: 0; box-shadow: 5px 5px 0 rgba(0, 0, 0, .35); }
 .arcade-kicker { font-family: 'Courier New', Courier, monospace; }
@@ -1112,6 +1327,42 @@ body::before {
 .target-mark { font-family: 'Courier New', Courier, monospace; font-size: .72rem; font-weight: 900; color: var(--retro-ink); }
 .status-mark { display: inline-grid; place-items: center; min-width: 1.8em; min-height: 1.8em; padding: 0 .2em; color: var(--retro-ink); background: var(--retro-cyan); font-size: .58em; font-weight: 900; line-height: 1; vertical-align: .12em; }
 .status-error { color: #fff; background: var(--retro-pink); }
+.game-logo-shell { position: relative; }
+.game-logo-shell > i { position: relative; z-index: 1; font-size: 1.55em; line-height: 1; }
+.game-logo-shell > .logo-fallback { position: absolute; inset: 0; display: grid; place-items: center; font: 900 .78em 'Courier New', monospace; letter-spacing: -.08em; opacity: .3; }
+.best-score { color: var(--retro-amber) !important; font: 700 .75rem 'Courier New', monospace; letter-spacing: .06em; }
+.split-duel { min-height: 100vh; padding: clamp(1rem, 3vw, 2.5rem); color: #f7f4eb; background: var(--retro-ink); background-image: linear-gradient(rgba(72,224,208,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(72,224,208,.035) 1px, transparent 1px); background-size: 28px 28px; }
+.split-duel-header { max-width: 1120px; margin: 0 auto 1.25rem; display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; gap: 1rem; }
+.split-duel-header h1 { color: #f7f4eb; font: 800 clamp(1.2rem, 3vw, 2rem) 'Courier New', monospace; text-transform: uppercase; text-shadow: 3px 3px 0 #000; }
+.split-duel-rule { justify-self: end; color: var(--retro-pink); font: 800 .68rem 'Courier New', monospace; letter-spacing: .1em; text-align: right; }
+.split-arena { position: relative; max-width: 1120px; min-height: min(650px, calc(100vh - 150px)); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--retro-line); overflow: hidden; touch-action: none; box-shadow: 8px 8px 0 rgba(0,0,0,.34); }
+.split-half { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem; min-height: 520px; border: 0; color: #f7f4eb; cursor: pointer; touch-action: none; font-family: 'Courier New', monospace; }
+.split-half span { font-size: .8rem; letter-spacing: .16em; }
+.split-half strong { font-size: clamp(2rem, 7vw, 5rem); }
+.split-player-one { background: #17343a; border-right: 2px solid var(--retro-amber); }
+.split-player-two { background: #3a202d; }
+.split-half:active { filter: brightness(1.3); }
+.split-center-line { position: absolute; z-index: 2; top: 0; bottom: 0; left: 50%; width: 8px; display: grid; place-items: center; transform: translateX(-50%); background: var(--retro-amber); box-shadow: 0 0 24px rgba(255,200,87,.7); pointer-events: none; }
+.split-center-line span { display: grid; place-items: center; min-width: 74px; min-height: 74px; border: 3px solid var(--retro-ink); border-radius: 50%; color: var(--retro-ink); background: var(--retro-amber); font: 900 .8rem 'Courier New', monospace; }
+.split-go .split-center-line { background: var(--retro-cyan); box-shadow: 0 0 32px rgba(72,224,208,.9); }
+.split-go .split-center-line span { color: #fff; background: var(--retro-cyan); }
+.split-winner .split-center-line span { background: var(--retro-cyan); }
+.split-false-start .split-center-line span { background: var(--retro-pink); }
+.split-message { position: absolute; z-index: 3; bottom: 1.2rem; left: 50%; transform: translateX(-50%); padding: .65rem 1rem; color: #f7f4eb; background: rgba(16,19,24,.9); border: 1px solid var(--retro-line); font: 700 .72rem 'Courier New', monospace; text-align: center; white-space: nowrap; }
+.split-next { display: block; margin: 1.25rem auto 0; }
+.multiplayer-game { min-height: 100vh; padding: clamp(1rem, 3vw, 2.5rem); color: #f7f4eb; background: var(--retro-ink); background-image: linear-gradient(rgba(72,224,208,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(72,224,208,.035) 1px, transparent 1px); background-size: 28px 28px; }
+.multiplayer-stage { min-height: min(650px, calc(100vh - 150px)); }
+.multi-scores { justify-self: end; display: flex; gap: .8rem; color: var(--retro-amber); font: 800 .78rem 'Courier New', monospace; }
+.multi-options { width: min(560px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.multi-four-options { grid-template-columns: repeat(2, 1fr); }
+.multi-options button, .multi-grid button, .multi-action { min-height: 70px; border: 2px solid var(--retro-line); background: var(--retro-panel-light); color: #f7f4eb; cursor: pointer; font: 800 .8rem 'Courier New', monospace; box-shadow: 4px 4px 0 rgba(0,0,0,.35); }
+.multi-options button:hover, .multi-grid button:hover, .multi-action:hover { border-color: var(--retro-amber); background: #34434a; transform: translateY(-3px); }
+.multi-grid { width: min(420px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
+.multi-grid button { min-height: 90px; }
+.multi-grid .multi-target { background: var(--retro-amber); color: var(--retro-ink); }
+.multi-action { display: block; width: min(320px, 100%); margin: 0 auto; background: var(--retro-amber); color: var(--retro-ink); }
+.memory-duel-options { grid-template-columns: repeat(4, 1fr); }
+.memory-duel-options p { grid-column: 1 / -1; text-align: center; color: var(--retro-cyan); }
 .container > .back-btn { z-index: 300; }
 .timing-button { display: block; margin: 1rem auto; min-width: 190px; }
 .lane-board, .stack-board { width: min(680px, 100%); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; align-items: end; min-height: 230px; }
@@ -1141,4 +1392,51 @@ body::before {
   .lane-board { gap: .35rem; min-height: 190px; }
   .lane { min-height: 150px; font-size: .65rem; }
   .stack-piece { width: 90%; }
+  .multi-scores { gap: .35rem; font-size: .62rem; }
+  .multi-options { gap: .45rem; }
+  .multi-options button, .multi-grid button { min-height: 58px; font-size: .68rem; }
+  .split-duel-header { grid-template-columns: auto 1fr; }
+  .split-duel-rule { grid-column: 2; justify-self: start; }
+  .split-arena { min-height: calc(100vh - 155px); }
+  .split-half { min-height: calc(100vh - 155px); }
+  .split-center-line span { min-width: 58px; min-height: 58px; font-size: .65rem; }
+  .split-message { width: calc(100% - 2rem); white-space: normal; }
+}
+
+/* Final home catalog overrides: keep the game shelf readable after legacy styles. */
+.game-catalog .catalog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  align-items: center;
+  gap: 2rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+}
+.game-catalog .header-top { margin-bottom: 0; }
+.game-catalog .games-grid {
+  grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+  grid-auto-rows: 218px;
+  gap: 1.1rem;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2rem;
+}
+.game-catalog .game-card { height: 218px; padding: 1.15rem 1.15rem 4rem; }
+.game-catalog .game-card-content { gap: .55rem; }
+.game-catalog .game-logo { width: 4.3rem; height: 4.3rem; font-size: 1rem; }
+.game-catalog .game-title { font-size: .94rem; }
+.game-catalog .game-description { font-size: .72rem; }
+
+@media (max-width: 760px) {
+  .game-catalog .catalog-header { grid-template-columns: 1fr; gap: .9rem; }
+  .game-catalog .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 230px; }
+  .game-catalog .game-card { height: 230px; padding: .9rem; }
+  .game-catalog .game-logo { width: 3.5rem; height: 3.5rem; font-size: .8rem; }
+}
+
+@media (min-width: 1100px) {
+  .game-catalog .catalog-header-secondary { padding: 1rem 1.5rem; }
+  .game-catalog .catalog-header-secondary h2 { margin-bottom: .25rem; font-size: 1.35rem; }
+  .game-catalog .games-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 246px; gap: .9rem; }
+  .game-catalog .game-card { height: 246px; padding: 1rem; }
+  .game-catalog .game-logo { width: 3.8rem; height: 3.8rem; font-size: .9rem; }
+  .game-catalog .game-title { font-size: .86rem; }
+  .game-catalog .game-description { font-size: .68rem; }
 }

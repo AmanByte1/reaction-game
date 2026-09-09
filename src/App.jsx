@@ -3,6 +3,8 @@ import ReactionGame from './ReactionGame';
 import BoxCatchGame from './BoxCatchGame';
 import GameCatalog from './GameCatalog';
 import ArcadeGame from './ArcadeGame';
+import MultiplayerGame from './MultiplayerGame';
+import SplitScreenDuel from './SplitScreenDuel';
 import { GAMES_LIBRARY } from './gamesLibrary';
 
 export default function App() {
@@ -33,6 +35,14 @@ export default function App() {
         <BoxCatchGame onBack={handleBackToMenu} />
       </>
     );
+  }
+
+  const selectedConfig = currentGame && GAMES_LIBRARY.find(g => g.id === currentGame);
+  if (selectedConfig?.id === 'split-screen-duel') {
+    return <SplitScreenDuel game={selectedConfig} onBack={handleBackToMenu} />;
+  }
+  if (selectedConfig?.category === 'Multiplayer') {
+    return <MultiplayerGame game={selectedConfig} onBack={handleBackToMenu} />;
   }
 
   if (currentGame && currentGame !== 'reaction' && currentGame !== 'boxcatch') {

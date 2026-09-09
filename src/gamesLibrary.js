@@ -1,4 +1,4 @@
-// Game Library with 100 games organized by category
+// Game Library with 110 games organized by category
 // Each game includes: id, label, category, emoji, description, component
 
 export const GAMES_LIBRARY = [
@@ -717,19 +717,105 @@ export const GAMES_LIBRARY = [
     emoji: '🎺',
     description: 'Master melodies'
   },
+
+  // LOCAL MULTIPLAYER GAMES
+  {
+    id: 'duel-tap',
+    label: 'Duel Tap',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Pass the controls and race for points'
+  },
+  {
+    id: 'grid-capture',
+    label: 'Grid Capture',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Claim the target cell before your rival'
+  },
+  {
+    id: 'quick-draw',
+    label: 'Quick Draw',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Take turns in a fast draw duel'
+  },
+  {
+    id: 'memory-duel',
+    label: 'Memory Duel',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Build a memory chain together'
+  },
+  {
+    id: 'pong-duel',
+    label: 'Pong Duel',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Return the rally to win the point'
+  },
+  {
+    id: 'math-duel',
+    label: 'Math Duel',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Solve head-to-head number challenges'
+  },
+  {
+    id: 'quad-tap',
+    label: 'Quad Tap Arena',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Four players compete for tap points'
+  },
+  {
+    id: 'four-lane',
+    label: 'Four Lane Race',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Choose the clear lane each turn'
+  },
+  {
+    id: 'color-claim',
+    label: 'Color Claim',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Claim the correct color for your team'
+  },
+  {
+    id: 'quiz-royale',
+    label: 'Quiz Royale',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Four-way rapid fire number quiz'
+  },
+  {
+    id: 'split-screen-duel',
+    label: 'Split Screen Duel',
+    category: 'Multiplayer',
+    emoji: '',
+    description: 'Wait for the signal and touch first'
+  },
 ];
 
 // Game categories for filtering
 export const GAME_CATEGORIES = [
-  { id: 'all', label: 'All Games', count: 100 },
-  { id: 'Reaction', label: 'Reaction', count: 15 },
-  { id: 'Action', label: 'Action', count: 15 },
-  { id: 'Puzzle', label: 'Puzzle', count: 15 },
-  { id: 'Arcade', label: 'Arcade', count: 15 },
-  { id: 'Sports', label: 'Sports', count: 15 },
-  { id: 'Brain', label: 'Brain', count: 15 },
-  { id: 'Music', label: 'Music', count: 10 },
+  { id: 'all', label: 'All Games' },
+  { id: 'Reaction', label: 'Reaction' },
+  { id: 'Action', label: 'Action' },
+  { id: 'Puzzle', label: 'Puzzle' },
+  { id: 'Arcade', label: 'Arcade' },
+  { id: 'Sports', label: 'Sports' },
+  { id: 'Brain', label: 'Brain' },
+  { id: 'Music', label: 'Music' },
+  { id: 'Multiplayer', label: 'Multiplayer' },
 ];
+
+GAME_CATEGORIES.forEach((category) => {
+  category.count = category.id === 'all'
+    ? GAMES_LIBRARY.length
+    : GAMES_LIBRARY.filter((game) => game.category === category.id).length;
+});
 
 // Get games by category
 export const getGamesByCategory = (categoryId) => {

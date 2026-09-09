@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GAMES_LIBRARY, GAME_CATEGORIES, getGamesByCategory } from './gamesLibrary';
-import { getGameMark, getGameName } from './ArcadeGame';
+import { GameLogo, getGameLogoStyle, getGameName } from './ArcadeGame';
 
 export default function GameCatalog({ onGameSelect, category, onCategoryChange }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const gamesGridRef = useRef(null);
   const selectedCategory = category || 'all';
   
   const games = getGamesByCategory(selectedCategory);
@@ -13,12 +14,16 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
     game.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  useEffect(() => {
+    gamesGridRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [selectedCategory]);
+
   return (
     <div className="game-catalog">
       <header className="catalog-header">
         <div className="header-top">
           <h1><span className="brand-logo" aria-hidden="true">RA</span> Reaction Arcade</h1>
-          <p className="subtitle">100+ Mini Games Library</p>
+          <p className="subtitle">{GAMES_LIBRARY.length} Mini Games Library</p>
         </div>
         
         <div className="search-bar">
@@ -60,22 +65,29 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
             <p className="game-count">{filteredGames.length} game{filteredGames.length !== 1 ? 's' : ''}</p>
           </div>
 
-          <div className="games-grid">
+          <div className="games-grid" ref={gamesGridRef}>
             {filteredGames.length > 0 ? (
               filteredGames.map(game => (
                 <div
                   key={game.id}
                   className="game-card"
+                  role="button"
+                  tabIndex="0"
+                  aria-label={`Play ${getGameName(game)}`}
                   onClick={() => onGameSelect(game.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') onGameSelect(game.id);
+                  }}
                 >
                   <div className="game-card-content">
-                    <div className={`game-logo logo-${game.category.toLowerCase()}`} aria-hidden="true">{getGameMark(game)}</div>
+                    <GameLogo game={game} className={`game-logo logo-${game.category.toLowerCase()}`} style={getGameLogoStyle(game)} />
                     <h3 className="game-title">{getGameName(game)}</h3>
                     <p className="game-description">{game.description}</p>
                     <span className="game-category">{game.category}</span>
                   </div>
                   <div className="game-card-hover">
-                    <span>▶ Play Now</span>
+                    <span className="play-icon" aria-hidden="true"><i className="bi bi-play-fill" /></span>
+                    <span>PLAY</span>
                   </div>
                 </div>
               ))
@@ -99,6 +111,7 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
 
       <footer className="catalog-footer">
         <p><span className="status-mark" aria-hidden="true">●</span> Arcade network online</p>
+        <p className="creator-about">Created by <strong>Sai Aman Zakirsha</strong> <a href="https://youtube.com/@amanshift?si=fesbTinHNwQ4Slp6" target="_blank" rel="noreferrer">YouTube channel</a></p>
       </footer>
     </div>
   );

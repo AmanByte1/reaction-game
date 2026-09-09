@@ -18,7 +18,7 @@ const MIN_TIMER = 10; // seconds
 const MAX_TIMER = 300; // seconds
 const DEFAULT_TIMER = 60; // seconds
 
-export default function BoxCatchGame() {
+export default function BoxCatchGame({ onBack }) {
   const [gameState, setGameState] = useState('idle');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [score, setScore] = useState(0);
@@ -157,7 +157,17 @@ export default function BoxCatchGame() {
   const isNewTop = score > 0 && isNewTopScore(score);
 
   return (
-    <div className="boxcatch">
+    <div className="container">
+      {onBack && (
+        <button className="back-btn" onClick={onBack}>
+          ← Back to Games
+        </button>
+      )}
+      
+      <header>
+        <h1>📦 Box Catch</h1>
+      </header>
+
       <div
         className={`game-area boxcatch-area${gameState === 'running' ? ' running' : ''}`}
         onContextMenu={(e) => e.preventDefault()}

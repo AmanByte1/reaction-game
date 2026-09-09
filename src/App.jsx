@@ -1,34 +1,57 @@
 import { useState } from 'react';
 import ReactionGame from './ReactionGame';
 import BoxCatchGame from './BoxCatchGame';
-
-const GAMES = [
-  { id: 'reaction', label: '⚡ Reaction Battle' },
-  { id: 'boxcatch', label: '📦 Box Catch' },
-];
+import GameCatalog from './GameCatalog';
+import { GAMES_LIBRARY } from './gamesLibrary';
 
 export default function App() {
-  const [game, setGame] = useState('reaction');
+  const [currentGame, setCurrentGame] = useState(null);
+  const [category, setCategory] = useState(null);
 
+  const handleGameSelect = (gameId) => {
+    setCurrentGame(gameId);
+  };
+
+  const handleBackToMenu = () => {
+    setCurrentGame(null);
+    setCategory(null);
+  };
+
+  // Render selected game
+  if (currentGame === 'reaction') {
+    return (
+      <>
+        <ReactionGame onBack={handleBackToMenu} />
+      </>
+    );
+  }
+
+  if (currentGame === 'boxcatch') {
+    return (
+      <>
+        <BoxCatchGame onBack={handleBackToMenu} />
+      </>
+    );
+  }
+
+  if (currentGame && currentGame !== 'reaction' && currentGame !== 'boxcatch') {
+    const gameConfig = GAMES_LIBRARY.find(g => g.id === currentGame);
+    if (gameConfig) {
+      const GameComponent = gameConfig.component;
+      return (
+        <>
+          <GameComponent onBack={handleBackToMenu} />
+        </>
+      );
+    }
+  }
+
+  // Show game catalog/menu
   return (
-    <div className="container">
-      <header>
-        <h1>🎮 Reaction Arcade</h1>
-        <div className="game-select">
-          {GAMES.map((g) => (
-            <button
-              key={g.id}
-              type="button"
-              className={`game-select-btn${game === g.id ? ' active' : ''}`}
-              onClick={() => setGame(g.id)}
-            >
-              {g.label}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {game === 'reaction' ? <ReactionGame /> : <BoxCatchGame />}
-    </div>
+    <GameCatalog
+      onGameSelect={handleGameSelect}
+      category={category}
+      onCategoryChange={setCategory}
+    />
   );
 }

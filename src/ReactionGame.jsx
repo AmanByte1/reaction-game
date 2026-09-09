@@ -89,7 +89,7 @@ function RetryButton({ isMobile, onRetry, children }) {
   );
 }
 
-export default function ReactionGame() {
+export default function ReactionGame({ onBack }) {
   const isMobile = useRef(detectMobile()).current;
   const timeoutRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -241,26 +241,46 @@ export default function ReactionGame() {
   const leaderboardScores = scores[leaderboardMode] || [];
 
   return (
-    <>
+    <div className="container">
+      {onBack && (
+        <button className="back-btn" onClick={onBack}>
+          ← Back to Games
+        </button>
+      )}
+
+      <header>
+        <h1>⚡ Reaction Battle</h1>
+        <div className="game-select">
+          <button
+            type="button"
+            className={`game-select-btn${false ? ' active' : ''}`}
+            disabled
+            style={{ opacity: 0.5 }}
+          >
+            Reaction Game
+          </button>
+        </div>
+      </header>
+
       <div className="mode-toggle reaction-modes">
-          <button
-            type="button"
-            id="normalMode"
-            className={`mode-btn${currentMode === 'normal' ? ' active' : ''}`}
-            onClick={() => setMode('normal')}
-            onTouchStart={stopPropagation}
-          >
-            Normal Mode
-          </button>
-          <button
-            type="button"
-            id="proMode"
-            className={`mode-btn${currentMode === 'pro' ? ' active' : ''}`}
-            onClick={() => setMode('pro')}
-            onTouchStart={stopPropagation}
-          >
-            🔥 Pro Mode
-          </button>
+        <button
+          type="button"
+          id="normalMode"
+          className={`mode-btn${currentMode === 'normal' ? ' active' : ''}`}
+          onClick={() => setMode('normal')}
+          onTouchStart={stopPropagation}
+        >
+          Normal Mode
+        </button>
+        <button
+          type="button"
+          id="proMode"
+          className={`mode-btn${currentMode === 'pro' ? ' active' : ''}`}
+          onClick={() => setMode('pro')}
+          onTouchStart={stopPropagation}
+        >
+          🔥 Pro Mode
+        </button>
       </div>
 
       <main>
@@ -413,6 +433,6 @@ export default function ReactionGame() {
           Clear All Data
         </button>
       </footer>
-    </>
+    </div>
   );
 }

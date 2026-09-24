@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GAMES_LIBRARY, GAME_CATEGORIES, getGamesByCategory } from './gamesLibrary';
 import { GameLogo, getGameLogoStyle, getGameName } from './ArcadeGame';
 
-export default function GameCatalog({ onGameSelect, category, onCategoryChange }) {
+export default function GameCatalog({ onGameSelect, category, onCategoryChange, onPageNavigate }) {
   const [searchQuery, setSearchQuery] = useState('');
   const gamesGridRef = useRef(null);
   const selectedCategory = category || 'all';
@@ -110,8 +110,25 @@ export default function GameCatalog({ onGameSelect, category, onCategoryChange }
       </div>
 
       <footer className="catalog-footer">
-        <p><span className="status-mark" aria-hidden="true">●</span> Arcade network online</p>
-        <p className="creator-about">Created by <strong>Sai Aman Zakirsha</strong> <a href="https://youtube.com/@amanshift?si=fesbTinHNwQ4Slp6" target="_blank" rel="noreferrer">YouTube channel</a></p>
+        <div className="footer-top">
+          <p><span className="status-mark" aria-hidden="true">●</span> Arcade network online</p>
+          <p className="creator-about">
+            Created by <strong>Sai Aman Zakirsha</strong>{' '}
+            <a href="https://youtube.com/@amanshift?si=fesbTinHNwQ4Slp6" target="_blank" rel="noreferrer">
+              YouTube
+            </a>
+            {' · '}
+            <a href="https://github.com/AmanByte1/reaction-game" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </p>
+        </div>
+        <nav className="footer-nav" aria-label="Site pages">
+          <button className="footer-nav-btn" onClick={() => onPageNavigate('about')}>About</button>
+          <button className="footer-nav-btn" onClick={() => onPageNavigate('howtoplay')}>How to Play</button>
+          <button className="footer-nav-btn" onClick={() => onPageNavigate('contact')}>Contact</button>
+          <button className="footer-nav-btn" onClick={() => onPageNavigate('privacy')}>Privacy Policy</button>
+        </nav>
       </footer>
     </div>
   );
